@@ -68,3 +68,5 @@ docker build -t silicom/jenkins-master:1 .
 
 
 
+docker tag silicom/ubuntu18:1 localhost:5000/ubuntu18Sili
+docker push localhost:5000/ubuntu18_sili

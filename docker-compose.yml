@@ -1,6 +1,16 @@
 version: "3.7"
 
 services:
+    dockerRegistry:
+        container_name: registry
+        image: registry:2
+        ports:
+            - "5000:5000"
+        restart: always
+        volumes:
+            - v-registry:/var/lib/registry
+        networks:
+            - ci
     jenkinsMaster:
         container_name: jenkinsMaster
         image: silicom/jenkins-master:1
@@ -16,8 +26,22 @@ services:
             - nexus
         environment:
             - NEXUS_PORT=8081
-    jenkinsSlave:
-        container_name: jenkinsSlave
+    jenkinsSlave1:
+        container_name: jenkinsSlave1
+        image: silicom/ubuntu18:latest
+        restart: always
+        ports:
+            - "2221:22"
+        environment:
+            - 'JENKINS_URL=http://jenkins:8080'
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        depends_on:
+            - jenkinsMaster
+        networks:
+            - ci
+    jenkinsSlave2:
+        container_name: jenkinsSlave2
         image: silicom/ubuntu18:latest
         restart: always
         ports:
@@ -25,8 +49,7 @@ services:
         environment:
             - 'JENKINS_URL=http://jenkins:8080'
         volumes:
-            - /var/run/docker.sock:/var/run/docker.sock  # Expose the docker daemon in the container
-#            - /home/jenkins:/home/jenkins # Avoid mysql volume mount issue
+            - /var/run/docker.sock:/var/run/docker.sock
         depends_on:
             - jenkinsMaster
         networks:
@@ -39,15 +62,14 @@ services:
         ports:
             - "8081:8081"
         volumes:
-#            - /etc/nexus/nexus-data:/nexus-data
             - v-nexus:/nexus-data
         networks:
             - ci
 
 volumes:
     v-jenkins:
-#    nexus-data: {}
     v-nexus:
+    v-registry:
 
 networks:
     ci:
