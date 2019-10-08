@@ -1,0 +1,8 @@
+Docker Swarm en mode standolone.
+
+> docker-machine create -d virtualbox mh-keystore
+
+
+docker run -d --name devtest --mount source=myvol2,target=/app nginx:latest
+
+docker service create -d --replicas=4 --name devtest-service --mount source=myvol2,target=/app nginx:latest

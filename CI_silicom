@@ -1,0 +1,70 @@
+Installation de Docker sur les VMs
+
+> sudo yum remove docker docker-common docker-selinux docker-engine
+> sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+> sudo yum install docker-ce
+
+Activation & démarrage du service docker 
+
+> sudo systemctl enable docker.service
+> sudo systemctl start docker.service
+
+Activation du mode swarm
+
+Création du noeud manager (commande à exécuter sur la VM devenant le manager)
+> docker swarm init
+
+Sur tous les autres VM devant les workers (attention la commande est donnée
+> docker swarm join --token SWMTKN-1-4dx9neppu7czarlyaa32336dx1ig1pqcnfuu1lgxv95cc0ru8e-dcxcr03kszr8qkjxalegeukle 10.24.100.56:2377
+
+
+La commande ci-dessous permet de lister les noeuds du cluster docker
+> docker node ls
+
+
+
+Installation de Portainer.io (manager du cluster docker)
+> curl -L https://downloads.portainer.io/portainer-agent-stack.yml -o portainer-agent-stack.yml
+> curl -L https://downloads.portainer.io/portainer-agent-stack.yml -o portainer-agent-stack.yml
+
+Après l'installation portainer.io est accessible via http://{IP}:9000
+
+
+https://linuxfr.org/users/purplepsycho/journaux/mettre-en-place-des-build-automatiques-avec-jenkins-et-docker
+Jenkins
+
+docker volume create jenkins
+
+docker run --name jenkinsMaster -p 8080:8080 -p 50000:50000 -v jenkins:/var/jenkins_home jenkins/jenkins
+
+https://wiki.jenkins.io/display/JENKINS/Docker+Plugin
+https://linuxfr.org/users/purplepsycho/journaux/mettre-en-place-des-build-automatiques-avec-jenkins-et-docker
+https://code-maze.com/ci-jenkins-docker/
+Dockerfile https://putaindecode.io/articles/les-dockerfiles/
+
+
+docker login --username=regis29
+
+docker network create ci
+
+
+-> permet de builder une image docker à partir d'un dockerfile
+docker build -t silicom/ubuntu18:1 . 
+docker tag silicom/ubuntu18:1 silicom/ubuntu18:latest
+docker run --name ubuntu -d -p 22 silicom/ubuntu18:latest
+
+
+
+docker run --name centos -d -p 22  regis/ssh:centos7
+docker run --name centos regis/ssh:centos7
+docker network connect ci centos
+
+ssh -p 32771 jenkins@localhost -> pwd jenkins
+
+docker network inspect ci
+
+
+docker build -t silicom/jenkins-master:1 .
+
+
+
