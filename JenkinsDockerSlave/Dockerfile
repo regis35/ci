@@ -3,13 +3,12 @@ FROM ubuntu:18.04
 # Make sure the package repository is up to date.
 RUN apt-get update && \
     apt-get -qy full-upgrade && \
-    apt-get install -qy git && \
+    apt-get install --no-install-recommends -qy git \
+	openjdk-11-jdk \
 # Install a basic SSH server
-    apt-get install -qy openssh-server && \
+    openssh-server && \
     sed -i 's|session    required     pam_loginuid.so|session    optional     pam_loginuid.so|g' /etc/pam.d/sshd && \
     mkdir -p /var/run/sshd && \
-# Install JDK 8 (latest stable edition at 2019-04-01)
-    apt-get install -qy openjdk-11-jdk && \
 # Cleanup old packages
     apt-get -qy autoremove && \
 # Add user jenkins to the image
@@ -19,8 +18,19 @@ RUN apt-get update && \
     echo "jenkins:jenkins" | chpasswd && \
     mkdir /home/jenkins/.m2
 
+RUN apt-get update  && \
+    apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - && \
+    apt-key fingerprint 0EBFCD88 && \
+    add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" && \
+    apt-get update  && \
+    apt-get install -y docker-ce && \
+    usermod -aG docker jenkins
+
 # Copy authorized keys
 COPY .ssh/authorized_keys /home/jenkins/.ssh/authorized_keys
+
+VOLUME ["/var/run/docker.sock"]
 
 RUN chown -R jenkins:jenkins /home/jenkins/.m2/ && \
     chown -R jenkins:jenkins /home/jenkins/.ssh/

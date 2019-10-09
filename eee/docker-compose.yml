@@ -1,0 +1,57 @@
+version: "3.7"
+services:
+    master:
+        image: eeacms/jenkins-master
+        ports:
+            - "8080:8080"
+            - "50000:50000"
+        environment:
+            - JAVA_OPTS=-Xmx2048m
+        volumes:
+            - jenkins-master:/var/jenkins_home
+        networks:
+            - eee
+    docker13:
+        container_name: docker13
+        image: docker:1.13-dind
+        privileged: true
+        volumes:
+            - jenkins-master:/var/jenkins_home
+        networks:
+            - eee
+    worker:
+        image: eeacms/jenkins-slave-dind:1.13
+        environment:
+            JAVA_OPTS: "-Xmx2048m"
+            DOCKER_HOST: tcp://0.0.0.0:2375
+            JENKINS_MASTER: "http://master:8080"
+            JENKINS_NAME: "worker"
+            JENKINS_USER: "jenkins"
+            JENKINS_PASS: "jenkins"
+            JENKINS_RETRY: "10"
+        volumes:
+            - jenkins-worker:/var/jenkins_home/worker
+            #- tcp://0.0.0.0:2376:/var/run/docker.sock
+        depends_on:
+            - master
+        networks:
+            - eee
+    dockerRegistry:
+        container_name: registry
+        image: registry:2
+        ports:
+            - "5000:5000"
+        restart: always
+        volumes:
+            - v-registry:/var/lib/registry
+        networks:
+            - eee
+            
+volumes:
+    jenkins-master:
+    jenkins-worker:
+    v-registry:
+
+networks:
+    eee:
+        driver: bridge
