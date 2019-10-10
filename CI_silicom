@@ -55,6 +55,7 @@ docker run --name ubuntu -d -p 22 silicom/ubuntu18:latest
 
 
 
+
 docker run --name centos -d -p 22  regis/ssh:centos7
 docker run --name centos regis/ssh:centos7
 docker network connect ci centos
@@ -67,6 +68,10 @@ docker network inspect ci
 docker build -t silicom/jenkins-master:1 .
 
 
+docker build -t silicom/java:1 .
+docker tag silicom/java:1 silicom/java:latest
+docker tag silicom/java:latest localhost:5000/javaCus
+docker push localhost:5000/javaCus
 
 docker tag silicom/ubuntu18:1 localhost:5000/ubuntu18Sili
 docker push localhost:5000/ubuntu18_sili
