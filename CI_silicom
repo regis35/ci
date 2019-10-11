@@ -93,3 +93,6 @@ docker tag silicom/custom:latest localhost:5000/silicom_custom
 docker push localhost:5000/silicom_custom
 
 
+Pour Nexus ajouter un user & les repo qui vont bien
+Attention aux droits d'accès pour le partage des dépendance maven
+

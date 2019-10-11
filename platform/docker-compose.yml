@@ -1,0 +1,85 @@
+version: "3.7"
+services:
+    nexus:
+        container_name: nexus
+        image: sonatype/nexus3
+        restart: always
+        ports:
+            - "8081:8081"
+        volumes:
+            - nexus:/nexus-data
+        networks:
+            - integration_continous
+            
+    jenkinsMaster:
+        container_name: jenkinsMaster
+        image: eeacms/jenkins-master
+        ports:
+            - "8080:8080"
+            - "50000:50000"
+        environment:
+            - JAVA_OPTS=-Xmx2048m
+        volumes:
+            - jenkins-master:/var/jenkins_home
+        networks:
+            - integration_continous
+    jenkinsWorker_1:
+        container_name: jenkinsWorker_1
+        image: eeacms/jenkins-slave-dind:1.13
+        environment:
+            JAVA_OPTS: "-Xmx2048m"
+            JENKINS_MASTER: "http://jenkinsMaster:8080"
+            JENKINS_NAME: "worker"
+            JENKINS_USER: "jenkins"
+            JENKINS_PASS: "jenkins"
+            JENKINS_RETRY: "10"
+        volumes:
+            - jenkins-worker:/var/jenkins_home/worker
+            - /var/run/docker.sock:/var/run/docker.sock
+            # partage des jar (dependance) afin de ne pas les télécharger à chaque build attention aux droits d'accès 
+            - maven_dep:/var/jenkins_home/dep
+        depends_on:
+            - jenkinsMaster
+        networks:
+            - integration_continous
+    jenkinsWorker_2:
+        container_name: jenkinsWorker_2
+        image: eeacms/jenkins-slave-dind:1.13
+        environment:
+            JAVA_OPTS: "-Xmx2048m"
+            JENKINS_MASTER: "http://jenkinsMaster:8080"
+            JENKINS_NAME: "worker"
+            JENKINS_USER: "jenkins"
+            JENKINS_PASS: "jenkins"
+            JENKINS_RETRY: "10"
+        volumes:
+            - jenkins-worker:/var/jenkins_home/worker
+            - /var/run/docker.sock:/var/run/docker.sock
+            # partage des jar (dependance) afin de ne pas les télécharger à chaque build attention aux droits d'accès 
+            - maven_dep:/var/jenkins_home/dep
+        depends_on:
+            - jenkinsMaster
+        networks:
+            - integration_continous
+    dockerRegistry:
+        container_name: registry
+        image: registry:2
+        ports:
+            - "5000:5000"
+        restart: always
+        volumes:
+            - docker-registry:/var/lib/registry
+            - /var/run/docker.sock:/var/run/docker.sock
+        networks:
+            - integration_continous
+            
+volumes:
+    jenkins-master:
+    jenkins-worker:
+    docker-registry:
+    nexus:
+    maven_dep:
+
+networks:
+    integration_continous:
+        driver: bridge
