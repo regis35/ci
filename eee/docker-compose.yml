@@ -11,19 +11,10 @@ services:
             - jenkins-master:/var/jenkins_home
         networks:
             - eee
-    docker13:
-        container_name: docker13
-        image: docker:1.13-dind
-        privileged: true
-        volumes:
-            - jenkins-master:/var/jenkins_home
-        networks:
-            - eee
     worker:
         image: eeacms/jenkins-slave-dind:1.13
         environment:
             JAVA_OPTS: "-Xmx2048m"
-            DOCKER_HOST: tcp://0.0.0.0:2375
             JENKINS_MASTER: "http://master:8080"
             JENKINS_NAME: "worker"
             JENKINS_USER: "jenkins"
@@ -31,7 +22,8 @@ services:
             JENKINS_RETRY: "10"
         volumes:
             - jenkins-worker:/var/jenkins_home/worker
-            #- tcp://0.0.0.0:2376:/var/run/docker.sock
+            - /var/run/docker.sock:/var/run/docker.sock
+            - maven_dep:/var/jenkins_home/dep
         depends_on:
             - master
         networks:
@@ -44,6 +36,7 @@ services:
         restart: always
         volumes:
             - v-registry:/var/lib/registry
+            - /var/run/docker.sock:/var/run/docker.sock
         networks:
             - eee
             
@@ -51,6 +44,7 @@ volumes:
     jenkins-master:
     jenkins-worker:
     v-registry:
+    maven_dep:
 
 networks:
     eee:

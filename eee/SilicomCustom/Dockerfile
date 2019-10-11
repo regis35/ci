@@ -6,3 +6,5 @@ RUN adduser --quiet jenkins && \
 ADD settings.xml /home/jenkins/.m2/
 
 RUN chown -R jenkins:jenkins /home/jenkins/.m2/
+
+VOLUME ["/var/jenkins_home/dep"]
