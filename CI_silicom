@@ -41,7 +41,7 @@ https://wiki.jenkins.io/display/JENKINS/Docker+Plugin
 https://linuxfr.org/users/purplepsycho/journaux/mettre-en-place-des-build-automatiques-avec-jenkins-et-docker
 https://code-maze.com/ci-jenkins-docker/
 Dockerfile https://putaindecode.io/articles/les-dockerfiles/
-
+https://www.liatrio.com/blog/building-with-docker-using-jenkins-pipelines
 
 docker login --username=regis29
 
@@ -95,4 +95,7 @@ docker push localhost:5000/silicom_custom
 
 Pour Nexus ajouter un user & les repo qui vont bien
 Attention aux droits d'accès pour le partage des dépendance maven
+
+L'image l executer par le worker jenkins n'est pas dans le même reseau. C'est pour cela qu'il ne peut pas résoudre le nexus lors du déploiement
+Modifier le pipeline afin d'ajouter l'image docker dans le réseau
 
