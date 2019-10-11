@@ -73,5 +73,23 @@ docker tag silicom/java:1 silicom/java:latest
 docker tag silicom/java:latest localhost:5000/java_cus
 docker push localhost:5000/java_cus
 
+docker tag localhost:5000/java_cus localhost:5000/java_cus:latest
+
+
 docker tag silicom/ubuntu18:1 localhost:5000/ubuntu18Sili
 docker push localhost:5000/ubuntu18_sili
+
+Connexion au registry 
+$ docker login -u regis -p regis localhost:5000
+
+docker build -t silicom/java_cus:1 .
+docker tag silicom/java_cus:1 silicom/java_cus:latest
+docker tag silicom/java_cus:latest localhost:5000/java_cus
+docker push localhost:5000/java_cus
+
+docker build -t silicom/custom:1 .
+docker tag silicom/custom:1 silicom/custom:latest
+docker tag silicom/custom:latest localhost:5000/silicom_custom
+docker push localhost:5000/silicom_custom
+
+

@@ -1,0 +1,33 @@
+pipeline {
+	environment {
+		MY_MESSAGE = '';
+	}
+	agent {
+		docker {
+	        image 'localhost:5000/silicom_custom:latest'
+	        registryUrl 'https://registry:5000/'
+	    }
+	}
+    stages {
+        stage('compilation') {
+            steps {
+                sh 'mvn clean compile -DskipTests'
+            }
+        }
+		stage('Test Unitaire') {
+			steps {
+				sh 'mvn surefire:test'
+ 			}
+  		}
+//        stage('Test Integration') {
+//            steps {
+//                sh 'mvn verify -P integration-test'
+//            }
+//        }
+//        stage('Deploy') {
+//            steps {
+//                sh 'mvn install deploy -DskipTests'
+//            }
+//        }
+    }
+}
