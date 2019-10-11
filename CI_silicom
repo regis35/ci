@@ -70,8 +70,8 @@ docker build -t silicom/jenkins-master:1 .
 
 docker build -t silicom/java:1 .
 docker tag silicom/java:1 silicom/java:latest
-docker tag silicom/java:latest localhost:5000/javaCus
-docker push localhost:5000/javaCus
+docker tag silicom/java:latest localhost:5000/java_cus
+docker push localhost:5000/java_cus
 
 docker tag silicom/ubuntu18:1 localhost:5000/ubuntu18Sili
 docker push localhost:5000/ubuntu18_sili
